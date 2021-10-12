@@ -110,8 +110,19 @@ DoubleLinkedList::Node* DoubleLinkedList::erase(Node* pos)
 	Node* prev = pos->Prev;
 	Node* next = pos->Next;
 
-	prev->Next = next;
-	next->Prev = prev;
+	if (prev)
+	{
+		prev->Next = next;
+	}
+	if (next)
+	{
+		next->Prev = prev;
+	}
+
+	if (pos == _head)
+	{
+		_head = next;
+	}
 
 	delete pos;
 	pos = nullptr;
