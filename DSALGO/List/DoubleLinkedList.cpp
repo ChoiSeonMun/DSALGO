@@ -87,10 +87,19 @@ DoubleLinkedList::Node* DoubleLinkedList::insert(Node* pos, int value)
 	Node* newNode = new Node(value);
 	Node* prevNode = pos->Prev;
 	
-	prevNode->Next = newNode;
+	pos->Prev = newNode;
+	if (prevNode)
+	{
+		prevNode->Next = newNode;
+	}
 	newNode->Prev = prevNode;
 	newNode->Next = pos;
 	
+	if (pos == _head)
+	{
+		_head = newNode;
+	}
+
 	++_size;
 
 	return newNode;
@@ -114,12 +123,12 @@ DoubleLinkedList::Node* DoubleLinkedList::erase(Node* pos)
 
 void DoubleLinkedList::push_front(int value)
 {
-	insert(begin()->Next, value);
+	insert(begin(), value);
 }
 
 void DoubleLinkedList::push_back(int value)
 {
-	insert(end()->Prev, value);
+	insert(end(), value);
 }
 
 void DoubleLinkedList::pop_front()
