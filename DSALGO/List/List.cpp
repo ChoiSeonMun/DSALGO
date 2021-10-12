@@ -82,4 +82,6 @@ int main()
 		cout << iter->Data << ' ';
 	}
 	cout << endl;
+
+	cout << boolalpha << myList3.contains(1) << endl;
 }
