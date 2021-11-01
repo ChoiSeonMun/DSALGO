@@ -10,7 +10,7 @@ public:
 	MyVector2() = default;
 
 	// count만큼 공간이 할당된 생성자
-	MyVector2(size_t count)
+	explicit MyVector2(size_t count)
 		: _container{ new T[count] }, _size{ count }, _capacity{ count }
 	{
 

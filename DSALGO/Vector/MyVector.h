@@ -7,7 +7,7 @@ public:
 	MyVector() = default;
 
 	// count만큼 공간이 할당된 생성자
-	MyVector(size_t count);
+	explicit MyVector(size_t count);
 
 	// 복사 생성자. 깊은 복사(deep copy)가 이뤄져야 한다.
 	MyVector(const MyVector& other);
