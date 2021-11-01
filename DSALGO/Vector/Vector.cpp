@@ -1,6 +1,7 @@
 ﻿#include <vector>
 #include <iostream>
 #include "MyVector.h"
+#include "MyVector2.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ int main()
 	vec.push_back(2);
 	vec.pop_back();
 
-	for (int i = 0; i < vec.size(); ++i)
+	for (size_t i = 0; i < vec.size(); ++i)
 	{
 		cout << vec[i];
 	}
@@ -38,14 +39,14 @@ int main()
 	cout << "New Cap : " << vec.capacity() << endl;
 
 	vec2.insert(vec2.begin() + 2, 3);
-	for (int elem : vec2)
+	for (size_t elem : vec2)
 	{
 		cout << elem << ' ';
 	}
 	cout << endl;
 
 	vec3.erase(vec3.begin());
-	for (int i = 0; i < vec3.size(); ++i)
+	for (size_t i = 0; i < vec3.size(); ++i)
 	{
 		cout << vec3[i] << ' ';
 	}
@@ -58,7 +59,7 @@ int main()
 	mvec.push_back(2);
 	mvec.pop_back();
 
-	for (int i = 0; i < mvec.size(); ++i)
+	for (size_t i = 0; i < mvec.size(); ++i)
 	{
 		cout << mvec[i];
 	}
@@ -91,9 +92,19 @@ int main()
 	cout << boolalpha << mvec2.contains(2) << endl;
 
 	mvec2.erase(mvec2.begin());
-	for (int i = 0; i < mvec2.size(); ++i)
+	for (size_t i = 0; i < mvec2.size(); ++i)
 	{
 		cout << vec2[i] << ' ';
 	}
 	cout << endl;
+
+	MyVector2<double> tmvec;
+	tmvec.push_back(1.4);
+	tmvec.push_back(2.3);
+	tmvec.push_back(3.3);
+
+	for (double elem : tmvec)
+	{
+		cout << elem << ' ';
+	}
 }

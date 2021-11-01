@@ -244,7 +244,7 @@ public:
 			return;
 		}
 
-		T* newContainer = new int[newCapacity];
+		T* newContainer = new T[newCapacity];
 
 		for (size_t i = 0; i < _size; ++i)
 		{
