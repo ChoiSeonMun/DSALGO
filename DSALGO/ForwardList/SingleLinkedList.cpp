@@ -19,10 +19,10 @@ SingleLinkedList::SingleLinkedList(size_t count)
 SingleLinkedList::SingleLinkedList(const SingleLinkedList& other)
 	: SingleLinkedList()
 {
-	Node* inserted = before_begin();
-	for (const Node* iter = other.begin(); iter != other.end(); iter = iter->Next)
+	auto inserted = before_begin();
+	for (auto elem : other)
 	{
-		inserted = insert_after(inserted, iter->Data);
+		inserted = insert_after(inserted, elem);
 	}
 }
 
@@ -51,63 +51,71 @@ SingleLinkedList::~SingleLinkedList()
 
 int& SingleLinkedList::front()
 {
-	return begin()->Data;
+	return *begin();
 }
 
 const int& SingleLinkedList::front() const
 {
-	return begin()->Data;
+	return *begin();
 }
 
-SingleLinkedList::Node* SingleLinkedList::before_begin()
+SingleLinkedList::iterator SingleLinkedList::before_begin()
 {
-	return _head;
+	return iterator(_head);
 }
 
-const SingleLinkedList::Node* SingleLinkedList::before_begin() const
+SingleLinkedList::const_iterator SingleLinkedList::before_begin() const
 {
-	return _head;
+	return const_iterator(_head);
 }
 
-SingleLinkedList::Node* SingleLinkedList::begin()
+SingleLinkedList::iterator SingleLinkedList::begin()
 {
-	return _head->Next;
+	auto r = before_begin();
+	++r;
+
+	return r;
 }
 
-const SingleLinkedList::Node* SingleLinkedList::begin() const
+SingleLinkedList::const_iterator SingleLinkedList::begin() const
 {
-	return _head->Next;
+	auto r = before_begin();
+	++r;
+
+	return r;
 }
 
-SingleLinkedList::Node* SingleLinkedList::end()
+SingleLinkedList::iterator SingleLinkedList::end()
 {
-	return _end;
+	return iterator(_end);
 }
 
-const SingleLinkedList::Node* SingleLinkedList::end() const
+SingleLinkedList::const_iterator SingleLinkedList::end() const
 {
-	return _end;
+	return const_iterator(_end);
 }
 
-SingleLinkedList::Node* SingleLinkedList::insert_after(Node* pos, int value)
+SingleLinkedList::iterator SingleLinkedList::insert_after(const_iterator pos, int value)
 {
+	Node* where = pos._p;
 	Node* newNode = new Node(value);
-	newNode->Next = pos->Next;
-	pos->Next = newNode;
+	newNode->Next = where;
+	where->Next = newNode;
 
-	return newNode;
+	return iterator(newNode);
 }
 
-SingleLinkedList::Node* SingleLinkedList::erase_after(Node* pos)
+SingleLinkedList::iterator SingleLinkedList::erase_after(const_iterator pos)
 {
-	Node* removed = pos->Next;
+	Node* where = pos._p;
+	Node* removed = where->Next;
 	
 	if (removed == nullptr)
 	{
 		return end();
 	}
 
-	pos->Next = removed->Next;
+	where->Next = removed->Next;
 
 	return removed;
 }
@@ -119,8 +127,8 @@ void SingleLinkedList::push_front(int value)
 
 void SingleLinkedList::pop_front()
 {
-	Node* removed = erase_after(before_begin());
-	delete removed;
+	iterator removed = erase_after(before_begin());
+	delete removed._p;
 }
 
 bool SingleLinkedList::empty() const
@@ -156,4 +164,98 @@ SingleLinkedList::Node::Node(int data, Node* next)
 SingleLinkedList::Node::~Node()
 {
 	Next = nullptr;
+}
+
+SingleLinkedList::const_iterator::const_iterator(Node* p)
+	: _p{ p }
+{
+}
+
+SingleLinkedList::const_iterator::~const_iterator()
+{
+	_p = nullptr;
+}
+
+const int& SingleLinkedList::const_iterator::operator*() const
+{
+	return _p->Data;
+}
+
+const int* SingleLinkedList::const_iterator::operator->() const
+{
+	return &(_p->Data);
+}
+
+SingleLinkedList::const_iterator& SingleLinkedList::const_iterator::operator++()
+{
+	_p = _p->Next;
+	
+	return *this;
+}
+
+SingleLinkedList::const_iterator SingleLinkedList::const_iterator::operator++(int)
+{
+	auto temp = *this;
+	_p = _p->Next;
+
+	return temp;
+}
+
+bool SingleLinkedList::const_iterator::operator==(const const_iterator& rhs) const
+{
+	if (_p == rhs._p)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool SingleLinkedList::const_iterator::operator!=(const const_iterator& rhs) const
+{
+	return !(*this == rhs);
+}
+
+bool SingleLinkedList::const_iterator::operator==(nullptr_t p) const
+{
+	if (_p == nullptr)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool SingleLinkedList::const_iterator::operator!=(nullptr_t p) const
+{
+	return !(*this == nullptr);
+}
+
+int& SingleLinkedList::iterator::operator*() const
+{
+	return const_cast<int&>(const_iterator::operator*());
+}
+
+int* SingleLinkedList::iterator::operator->() const
+{
+	return const_cast<int*>(const_iterator::operator->());
+}
+
+SingleLinkedList::iterator& SingleLinkedList::iterator::operator++()
+{
+	const_iterator::operator++();
+
+	return *this;
+}
+
+SingleLinkedList::iterator SingleLinkedList::iterator::operator++(int)
+{
+	iterator temp = *this;
+	const_iterator::operator++();
+
+	return temp;
 }

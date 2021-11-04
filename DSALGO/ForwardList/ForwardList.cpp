@@ -16,6 +16,9 @@ int main()
 	list.pop_front();
 
 	cout << list.front() << endl;
+	
+	if (list.begin() == list.cbegin())
+		cout << "asdfsadf";
 
 	for (int elem : list)
 	{
@@ -54,20 +57,20 @@ int main()
 
 	cout << mlist.front() << endl;
 
-	for (auto iter = mlist.begin(); iter != mlist.end(); iter = iter->Next)
+	for (int elem : mlist)
 	{
-		cout << iter->Data << ' ';
+		cout << elem << ' ';
 	}
 	cout << endl;
 
 	auto iter2 = mlist2.insert_after(mlist2.begin(), 3);
-	iter2 = iter2->Next;
+	++iter2;
 	iter2 = mlist2.insert_after(iter2, 4);
 	mlist2.erase_after(iter2);
 
-	for (auto iter = mlist2.begin(); iter != mlist2.end(); iter = iter->Next)
+	for (int elem : mlist2)
 	{
-		cout << iter->Data << ' ';
+		cout << elem << ' ';
 	}
 	cout << endl;
 
@@ -75,9 +78,9 @@ int main()
 
 	SingleLinkedList mlist3(mlist);
 
-	for (auto iter = mlist3.begin(); iter != mlist3.end(); iter = iter->Next)
+	for (int elem : mlist3)
 	{
-		cout << iter->Data << ' ';
+		cout << elem << ' ';
 	}
 	cout << endl;
 }
