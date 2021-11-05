@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 class DoubleLinkedList
 {
 public:
@@ -17,6 +19,81 @@ public:
 	};
 
 public:
+	class const_iterator
+	{
+	public:
+		const_iterator(Node* p = nullptr)
+			: _p{ p } { }
+		~const_iterator() { _p = nullptr; }
+
+		const int& operator*() const { return _p->Data; }
+		const int* operator->() const { return &_p->Data; }
+		const_iterator& operator++() { _p = _p->Next; return *this; }
+		const_iterator		operator++(int)
+		{
+			auto temp = *this;
+			_p = _p->Next;
+
+			return temp;
+		}
+		const_iterator& operator--() { _p = _p->Prev; return *this; }
+		const_iterator		operator--(int)
+		{
+			auto temp = *this;
+			_p = _p->Prev;
+
+			return temp;
+		}
+		bool				operator==(const const_iterator& rhs) const { return _p == rhs._p; }
+		bool				operator!=(const const_iterator& rhs) const { return !(*this == rhs); }
+		bool				operator==(nullptr_t p) const { return _p == nullptr; }
+		bool				operator!=(nullptr_t p) const { return !(*this == nullptr); }
+
+	public:
+		Node* _p = nullptr;
+	};
+
+	class iterator : public const_iterator
+	{
+	public:
+		using const_iterator::const_iterator;
+
+		int& operator*() const
+		{
+			return const_cast<int&>(const_iterator::operator*());
+		}
+		int* operator->() const
+		{
+			return const_cast<int*>(const_iterator::operator->());
+		}
+		iterator& operator++()
+		{
+			const_iterator::operator++();
+
+			return *this;
+		}
+		iterator		operator++(int)
+		{
+			auto temp = *this;
+			const_iterator::operator++();
+
+			return temp;
+		}
+		iterator& operator--()
+		{
+			const_iterator::operator--();
+
+			return *this;
+		}
+
+		iterator		operator--(int)
+		{
+			auto temp = *this;
+			const_iterator::operator--();
+
+			return temp;
+		}
+	};
 	// 기본 생성자
 	DoubleLinkedList() = default;
 
@@ -42,21 +119,21 @@ public:
 
 	// 시작 요소를 가리키는 반복자를 반환한다.
 	// 리스트가 비어있다면 end()와 같다.
-	Node*			begin();
-	const Node*		begin() const;
+	iterator			begin();
+	const_iterator		begin() const;
 
 	// 끝 다음 요소를 가리키는 반복자를 반환한다.
-	Node*			end();
-	const Node*		end() const;
+	iterator			end();
+	const_iterator		end() const;
 
 	// pos 다음에 value를 삽입한다.
 	// 삽입된 요소를 가리키는 반복자를 반환한다.
-	Node*			insert(Node* pos, int value);
+	iterator			insert(iterator pos, int value);
 
 	// pos 다음 요소를 삭제한다.
 	// 삭제된 요소의 다음 요소를 가리키는 반복자를 반환한다.
 	// 아무 요소도 없으면 end()를 반환한다.
-	Node*			erase(Node* pos);
+	iterator			erase(iterator pos);
 
 	// 시작에 value를 삽입한다.
 	void			push_front(int value);

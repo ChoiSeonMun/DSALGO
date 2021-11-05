@@ -13,9 +13,9 @@ DoubleLinkedList::DoubleLinkedList(size_t count)
 
 DoubleLinkedList::DoubleLinkedList(const DoubleLinkedList& other)
 {
-	for (const Node* iter = other.begin(); iter != other.end(); iter = iter->Next)
+	for (auto iter = other.begin(); iter != other.end(); ++iter)
 	{
-		push_back(iter->Data);
+		push_back(*iter);
 	}
 }
 
@@ -44,58 +44,59 @@ DoubleLinkedList::~DoubleLinkedList()
 
 int& DoubleLinkedList::front()
 {
-	return begin()->Data;
+	return *begin();
 }
 
 const int& DoubleLinkedList::front() const
 {
-	return begin()->Data;
+	return *begin();
 }
 
 int& DoubleLinkedList::back()
 {
-	return end()->Prev->Data;
+	return *(--end());
 }
 
 const int& DoubleLinkedList::back() const
 {
-	return end()->Prev->Data;
+	return *(--end());
 }
 
-DoubleLinkedList::Node* DoubleLinkedList::begin()
+DoubleLinkedList::iterator DoubleLinkedList::begin()
 {
-	return _head;
+	return iterator(_head);
 }
 
-const DoubleLinkedList::Node* DoubleLinkedList::begin() const
+DoubleLinkedList::const_iterator DoubleLinkedList::begin() const
 {
-	return _head;
+	return const_iterator(_head);
 }
 
-DoubleLinkedList::Node* DoubleLinkedList::end()
+DoubleLinkedList::iterator DoubleLinkedList::end()
 {
-	return _end;
+	return iterator(_end);
 }
 
-const DoubleLinkedList::Node* DoubleLinkedList::end() const
+DoubleLinkedList::const_iterator DoubleLinkedList::end() const
 {
-	return _end;
+	return const_iterator(_end);
 }
 
-DoubleLinkedList::Node* DoubleLinkedList::insert(Node* pos, int value)
+DoubleLinkedList::iterator DoubleLinkedList::insert(iterator pos, int value)
 {
+	Node* where = pos._p;
 	Node* newNode = new Node(value);
-	Node* prevNode = pos->Prev;
+	Node* prevNode = where->Prev;
 	
-	pos->Prev = newNode;
+	where->Prev = newNode;
 	if (prevNode)
 	{
 		prevNode->Next = newNode;
 	}
 	newNode->Prev = prevNode;
-	newNode->Next = pos;
+	newNode->Next = where;
 	
-	if (pos == _head)
+	if (where == _head)
 	{
 		_head = newNode;
 	}
@@ -105,10 +106,16 @@ DoubleLinkedList::Node* DoubleLinkedList::insert(Node* pos, int value)
 	return newNode;
 }
 
-DoubleLinkedList::Node* DoubleLinkedList::erase(Node* pos)
+DoubleLinkedList::iterator DoubleLinkedList::erase(iterator pos)
 {
-	Node* prev = pos->Prev;
-	Node* next = pos->Next;
+	if (empty())
+	{
+		return end();
+	}
+
+	Node* where = pos._p;
+	Node* prev = where->Prev;
+	Node* next = where->Next;
 
 	if (prev)
 	{
@@ -119,13 +126,12 @@ DoubleLinkedList::Node* DoubleLinkedList::erase(Node* pos)
 		next->Prev = prev;
 	}
 
-	if (pos == _head)
+	if (where == _head)
 	{
 		_head = next;
 	}
 
-	delete pos;
-	pos = nullptr;
+	delete where;
 
 	--_size;
 
@@ -149,7 +155,7 @@ void DoubleLinkedList::pop_front()
 
 void DoubleLinkedList::pop_back()
 {
-	erase(end()->Prev);
+	erase(--end());
 }
 
 bool DoubleLinkedList::empty() const
@@ -179,9 +185,9 @@ void DoubleLinkedList::clear()
 
 bool DoubleLinkedList::contains(int value) const
 {
-	for (const Node* iter = begin(); iter != end(); iter = iter->Next)
+	for (auto iter = begin(); iter != end(); ++iter)
 	{
-		if (iter->Data == value)
+		if (*iter == value)
 		{
 			return true;
 		}

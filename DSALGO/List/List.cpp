@@ -51,9 +51,9 @@ int main()
 	myList.push_front(3);
 	myList.push_back(2);
 
-	for (auto iter = myList.begin(); iter != myList.end(); iter = iter->Next)
+	for (auto iter = myList.begin(); iter != myList.end(); ++iter)
 	{
-		cout << iter->Data << ' ';
+		cout << *iter << ' ';
 	}
 	cout << endl;
 
@@ -64,22 +64,22 @@ int main()
 
 	DoubleLinkedList myList2(5);
 	auto iter2 = myList2.insert(myList2.begin(), 3);
-	iter2 = iter2->Next;
+	++iter2;
 	iter2 = myList2.insert(iter2, 4);
 	myList2.erase(iter2);
 
-	for (auto iter = myList2.begin(); iter != myList2.end(); iter = iter->Next)
+	for (int elem : myList2)
 	{
-		cout << iter->Data << ' ';
+		cout << elem << ' ';
 	}
 	cout << endl;
 
 	cout << boolalpha << myList2.empty() << endl;
 
 	DoubleLinkedList myList3(myList);
-	for (auto iter = myList3.begin(); iter != myList3.end(); iter = iter->Next)
+	for (int elem : myList3)
 	{
-		cout << iter->Data << ' ';
+		cout << elem << ' ';
 	}
 	cout << endl;
 

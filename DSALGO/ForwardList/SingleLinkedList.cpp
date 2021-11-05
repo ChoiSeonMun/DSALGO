@@ -99,7 +99,7 @@ SingleLinkedList::iterator SingleLinkedList::insert_after(const_iterator pos, in
 {
 	Node* where = pos._p;
 	Node* newNode = new Node(value);
-	newNode->Next = where;
+	newNode->Next = where->Next;
 	where->Next = newNode;
 
 	return iterator(newNode);
