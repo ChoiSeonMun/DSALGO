@@ -16,11 +16,11 @@ int main()
 	auto iter = list.head();
 	do
 	{
-		cout << iter->Data << "->";
+		cout << *iter << "->";
 
-		iter = iter->Next;
+		++iter;
 	} while (iter != list.head());
-	cout << iter->Data << endl;
+	cout << *iter << endl;
 
 	CircularSingleLinkedList list2(list);
 
@@ -31,15 +31,15 @@ int main()
 
 	auto iter2 = list2.head();
 	iter2 = list2.insert_after(iter2, 10);
-	iter2 = iter2->Next;
+	++iter2;
 	list2.erase_after(iter2);
 
 	iter2 = list2.head();
 	do
 	{
-		cout << iter2->Data << "->";
+		cout << *iter2 << "->";
 
-		iter2 = iter2->Next;
+		++iter2;
 	} while (iter2 != list2.head());
-	cout << iter2->Data << endl;
+	cout << *iter2 << endl;
 }

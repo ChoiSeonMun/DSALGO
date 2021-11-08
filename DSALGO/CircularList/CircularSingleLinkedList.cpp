@@ -8,9 +8,9 @@ CircularSingleLinkedList::CircularSingleLinkedList(const CircularSingleLinkedLis
     auto iter = other.head();
     do
     {
-        push_back(iter->Data);
+        push_back(*iter);
         
-        iter = iter->Next;
+        ++iter;
     } while (iter != other.head());
 }
 
@@ -35,27 +35,31 @@ CircularSingleLinkedList::~CircularSingleLinkedList()
     _beforeTail = nullptr;
 }
 
-CircularSingleLinkedList::Node* CircularSingleLinkedList::insert_after(Node* pos, int value)
+CircularSingleLinkedList::iterator CircularSingleLinkedList::insert_after(iterator pos, int value)
 {
+    Node* where = pos._p;
     Node* newNode = new Node(value);
-    newNode->Next = pos->Next;
-    pos->Next = newNode;
+    newNode->Next = where->Next;
+    where->Next = newNode;
+
+    Node* h = _beforeHead->Next;
+    Node* t = _beforeTail->Next;
 
     // 첫 번째 원소가 삽입될 때
-    if (head()->Next == nullptr)
+    if (h->Next == nullptr)
     {
-        head()->Next = head();
+        h->Next = h;
     }
     // 하나의 원소가 삽입된 상태에서 첫 부분에 삽입될 때
     else if (before_head() == before_tail())
     {
-        _beforeTail = head();
-        tail()->Next = head();
+        _beforeTail = h;
+        _beforeTail->Next->Next = h;
     }
     // 첫 부분에 삽입될 때
-    else if (pos->Next == head())
+    else if (where->Next == h)
     {
-        tail()->Next = head();
+        t->Next = h;
     }
     // 끝에 삽입될 때
     else if (pos == before_tail() || pos == tail())
@@ -66,45 +70,50 @@ CircularSingleLinkedList::Node* CircularSingleLinkedList::insert_after(Node* pos
     return newNode;
 }
 
-CircularSingleLinkedList::Node* CircularSingleLinkedList::erase_after(Node* pos)
+CircularSingleLinkedList::iterator CircularSingleLinkedList::erase_after(iterator pos)
 {
     if (empty())
     {
         return tail();
     }
 
-    Node* removed = pos->Next;
+    Node* where = pos._p;
+    Node* removed = where->Next;
 
     // 1. 원소가 하나일 때
     if (before_head() == before_tail())
     {
-        before_head()->Next = nullptr;
+        _beforeHead->Next = nullptr;
     }
     // 2. 원소가 2개일 때
     else if (head() == before_tail())
     {
-        before_head()->Next = removed->Next;
+        _beforeHead->Next = removed->Next;
 
         _beforeTail = _beforeHead;
     }
     else if (pos == before_head() || pos == tail())
     {
-        before_head()->Next = removed->Next;
+        _beforeHead->Next = removed->Next;
 
-        tail()->Next = head();
+        Node* h = _beforeHead->Next;
+        Node* t = _beforeTail->Next;
+        t->Next = h;
     }
     else if (pos == before_tail())
     {
-        before_tail()->Next = removed->Next;
+        _beforeTail->Next = removed->Next;
 
-        while (tail()->Next != head())
+        Node* h = _beforeHead->Next;
+        Node* t = _beforeTail->Next;
+        while (t->Next != h)
         {
             _beforeTail = _beforeTail->Next;
         }
     }
     else
     {
-        pos->Next = removed->Next;
+        where->Next = removed->Next;
     }
     
     removed->Next = nullptr;
@@ -131,16 +140,14 @@ void CircularSingleLinkedList::push_back(int value)
 
 void CircularSingleLinkedList::pop_front()
 {
-    Node* erased = erase_after(before_head());
-    delete erased;
-    erased = nullptr;
+    auto erased = erase_after(before_head());
+    delete erased._p;
 }
 
 void CircularSingleLinkedList::pop_back()
 {
-    Node* erased = erase_after(before_tail());
-    delete erased;
-    erased = nullptr;
+    auto erased = erase_after(before_tail());
+    delete erased._p;
 }
 
 bool CircularSingleLinkedList::empty() const
@@ -165,15 +172,15 @@ void CircularSingleLinkedList::clear()
 
 bool CircularSingleLinkedList::contains(int value) const
 {
-    const Node* iter = head();
+    auto iter = head();
     do
     {
-        if (iter->Data == value)
+        if (*iter == value)
         {
             return true;
         }
 
-        iter = iter->Next;
+        ++iter;
     } while (iter != head());
 
     return false;
