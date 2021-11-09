@@ -12,6 +12,7 @@ int main()
 	list.push_front(1);
 	list.push_front(2);
 	list.push_back(4);
+	list.insert_after(list.before_tail(), 5);
 
 	auto iter = list.head();
 	do

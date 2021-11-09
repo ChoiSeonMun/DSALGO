@@ -5,6 +5,11 @@
 CircularSingleLinkedList::CircularSingleLinkedList(const CircularSingleLinkedList& other)
     : CircularSingleLinkedList()
 {
+    if (other.empty())
+    {
+        return;
+    }
+
     auto iter = other.head();
     do
     {
@@ -42,31 +47,31 @@ CircularSingleLinkedList::iterator CircularSingleLinkedList::insert_after(iterat
     newNode->Next = where->Next;
     where->Next = newNode;
 
-    Node* h = _beforeHead->Next;
-    Node* t = _beforeTail->Next;
+    Node*& h = _beforeHead->Next;
+    Node*& t = _beforeTail->Next;
 
     // 첫 번째 원소가 삽입될 때
     if (h->Next == nullptr)
     {
         h->Next = h;
     }
-    // 하나의 원소가 삽입된 상태에서 첫 부분에 삽입될 때
+    // 두 번째 원소가 삽입될 때
     else if (before_head() == before_tail())
     {
         _beforeTail = h;
-        _beforeTail->Next->Next = h;
-    }
-    // 첫 부분에 삽입될 때
-    else if (where->Next == h)
-    {
         t->Next = h;
     }
-    // 끝에 삽입될 때
+    // before_tail / tail에 삽입할 때
     else if (pos == before_tail() || pos == tail())
     {
         _beforeTail = _beforeTail->Next;
     }
-
+    // before_head에 삽입할 때
+    else if (pos == before_head())
+    {
+        t->Next = h;
+    }
+    
     return newNode;
 }
 
@@ -80,37 +85,45 @@ CircularSingleLinkedList::iterator CircularSingleLinkedList::erase_after(iterato
     Node* where = pos._p;
     Node* removed = where->Next;
 
-    // 1. 원소가 하나일 때
-    if (before_head() == before_tail())
+    // 원소가 하나일 때
+    if (_beforeHead->Next->Next == _beforeHead->Next)
     {
         _beforeHead->Next = nullptr;
     }
-    // 2. 원소가 2개일 때
-    else if (head() == before_tail())
+    // 원소가 두 개일 때
+    else if (before_head() == before_tail())
     {
         _beforeHead->Next = removed->Next;
 
         _beforeTail = _beforeHead;
-    }
-    else if (pos == before_head() || pos == tail())
-    {
-        _beforeHead->Next = removed->Next;
 
-        Node* h = _beforeHead->Next;
-        Node* t = _beforeTail->Next;
-        t->Next = h;
+        _beforeTail->Next->Next = _beforeHead->Next;
     }
+    // tail을 제거하려고 할 때
     else if (pos == before_tail())
     {
-        _beforeTail->Next = removed->Next;
+        _beforeTail->Next->Next = removed->Next;
 
-        Node* h = _beforeHead->Next;
-        Node* t = _beforeTail->Next;
-        while (t->Next != h)
+        while (_beforeTail->Next->Next != _beforeHead->Next)
         {
             _beforeTail = _beforeTail->Next;
         }
     }
+    // before_tail이 제거될 때
+    else if (removed == _beforeTail)
+    {
+        where->Next = removed->Next;
+
+        _beforeTail = where;
+    }
+    // 첫 부분이 제거될 때
+    else if (removed == _beforeHead->Next)
+    {
+        _beforeHead->Next->Next = removed->Next;
+
+        _beforeTail->Next->Next = _beforeHead->Next;
+    }
+    // 중간 원소가 제거될 때
     else
     {
         where->Next = removed->Next;
