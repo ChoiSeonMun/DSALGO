@@ -41,6 +41,22 @@ int BinarySearch(const vector<int>& vec, int value)
 	return -1;
 }
 
+int BinarySearchR(const vector<int>& vec, int s, int e, int v)
+{
+	if (s >= e)
+		return -1;
+
+	size_t m = (s + e) / 2;
+
+	if (vec[m] == v)
+		return m;
+
+	if (vec[m] < v)
+		return BinarySearchR(vec, m + 1, e, v);
+	else
+		return BinarySearchR(vec, s, m, v);
+}
+
 int main()
 {
 	vector<int> vec(1'000'000);
@@ -78,6 +94,23 @@ int main()
 	{
 		int value = distrib(gen);
 		BinarySearch(vec, value);
+	}
+	end = clock();
+	printf("%f sec\n", (end - start) / static_cast<double>(CLOCKS_PER_SEC));
+
+	puts("-------------------------------------------");
+
+	{
+		int value = distrib(gen);
+		printf("BinarySearchR Test\n");
+		printf("Value : %d, Index : %d\n", value, BinarySearchR(vec, 0, vec.size(), value));
+	}
+
+	start = clock();
+	for (int i = 0; i < 1000; ++i)
+	{
+		int value = distrib(gen);
+		BinarySearchR(vec, 0, vec.size(), value);
 	}
 	end = clock();
 	printf("%f sec", (end - start) / static_cast<double>(CLOCKS_PER_SEC));
