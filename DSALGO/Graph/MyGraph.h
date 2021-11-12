@@ -1,8 +1,11 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <array>
 #include <utility>
+#include <vector>
+
+using namespace std;
 
 enum class EGraphType
 {
@@ -10,51 +13,86 @@ enum class EGraphType
 	List
 };
 
-template <EGraphType type>
+template <EGraphType type, size_t N>
 class MyGraph;
 
-template <>
-class MyGraph<EGraphType::Matrix>
+template <size_t N>
+class MyGraph<EGraphType::Matrix, N>
 {
 public:
-	MyGraph(size_t count)
+	// 두 정점이 인접한지 확인한다.
+	bool		IsAdjacent(int start, int end)
 	{
-		_edges.reserve(count);
-		for (size_t i = 0; i < count; ++i)
+		if (_edges[start][end] != 0)
 		{
-			_edges.emplace_back(count);
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 
-	MyGraph(const MyGraph& other)
-		: _edges{ other._edges }
+	// 차수를 구한다.
+	int			GetDegree(int node)
 	{
-		
+		int in = GetInDegree(node);
+		int out = GetOutDegree(node);
+
+		return in + out;
 	}
 
-	MyGraph& operator=(const MyGraph& rhs)
+	// 진입 차수를 구한다.
+	int			GetInDegree(int node)
 	{
-		if (this != &rhs)
+		int c = 0;
+
+		for (size_t i = 0; i < _edges.size(); ++i)
 		{
-			MyGraph temp(rhs);
-			std::swap(_edges, temp._edges);
+			if (_edges[i][node] != 0)
+			{
+				++c;
+			}
 		}
 
-		return *this;
+		return c;
 	}
 
-	~MyGraph() = default;
+	// 진출 차수를 구한다.
+	int			GetOutDegree(int node)
+	{
+		int c = 0;
 
+		for (size_t i = 0; i < _edges.size(); ++i)
+		{
+			if (_edges[node][i] != 0)
+			{
+				++c;
+			}
+		}
+
+		return c;
+	}
+
+	// 간선을 추가한다.
 	void		AddEdge(int start, int end, int weight = 1)
 	{
 		_edges[start][end] = weight;
 	}
 
+	// 간선을 제거한다.
 	void		DeleteEdge(int start, int end)
 	{
 		_edges[start][end] = 0;
 	}
 
+	// 출력한다.
+	// 예시..
+	// [ 0 1 0 0 0 ]
+	// [ 0 0 1 0 0 ]
+	// [ 0 0 0 0 1 ]
+	// [ 0 1 0 0 0 ]
+	// [ 0 0 0 0 0 ]
 	void		Print()
 	{
 		size_t count = _edges.size();
@@ -71,46 +109,57 @@ public:
 	}
 
 private:
-	std::vector<std::vector<int>>		_edges;
+	array<array<int, vertexCount>, vertexCount>		_edges;
 };
 
-template <>
-class MyGraph<EGraphType::List>
+template <size_t N>
+class MyGraph<EGraphType::List, N>
 {
 public:
-	MyGraph(size_t count)
+	// 두 정점이 인접한지 확인한다.
+	bool		IsAdjacent(int start, int end);
+
+	// 차수를 구한다.
+	int			GetDegree(int node)
 	{
-		_edges.reserve(count);
-		for (size_t i = 0; i < count; ++i)
+		int in = GetInDegree(node);
+		int out = GetOutDegree(node);
+		
+		return in + out;
+	}
+
+	// 진입 차수를 구한다.
+	int			GetInDegree(int node)
+	{
+		int c = 0;
+
+		for (const auto& elem : _edges)
 		{
-			_edges.emplace_back();
-		}
-	}
-
-	MyGraph(const MyGraph& other)
-		: _edges{ other._edges }
-	{
-
-	}
-
-	MyGraph& operator=(const MyGraph& rhs)
-	{
-		if (this != &rhs)
-		{
-			MyGraph temp(rhs);
-			std::swap(_edges, temp._edges);
+			for (const auto& edge : elem)
+			{
+				if (edge.first == node)
+				{
+					++c;
+				}
+			}
 		}
 
-		return *this;
+		return c;
 	}
 
-	~MyGraph() = default;
+	// 진출 차수를 구한다.
+	int			GetOutDegree(int node)
+	{
+		return _edges[node].size();
+	}
 
+	// 간선을 추가한다.
 	void		AddEdge(int start, int end, int weight = 1)
 	{
 		_edges[start].emplace_back(end, weight);
 	}
 
+	// 간선을 제거한다.
 	void		DeleteEdge(int start, int end)
 	{
 		for (auto iter = _edges[start].begin(); iter != _edges[start].end(); ++iter)
@@ -124,6 +173,13 @@ public:
 		}
 	}
 
+	// 출력한다.
+	// 예시..
+	// [ 1 ] : [ (3,1) (4,3) ]
+	// [ 2 ] :
+	// [ 3 ] :
+	// [ 4 ] :
+	// [ 5 ] : [ (2, 4) (3, 5) ]
 	void		Print()
 	{
 		for (size_t r = 0; r < _edges.size(); ++r)
@@ -138,5 +194,5 @@ public:
 	}
 
 private:
-	std::vector<std::vector<std::pair<int, int>>>		_edges;
+	array<vector<std::pair<int, int>>, N>		_edges;
 };
