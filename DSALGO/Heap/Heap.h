@@ -52,7 +52,7 @@ public:
 
 		while (child <= _container.size())
 		{
-			if (child + 1 <= _container.size() && _container[child - 1] < _container[child])
+			if (child + 1 <= _container.size() && _container[child - 1] < _container[child + 1 - 1])
 			{
 				++child;
 			}
