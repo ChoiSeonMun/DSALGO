@@ -7,23 +7,66 @@ using namespace std;
 class Heap
 {
 public:
-	Heap()
-		: _container(1) { }
+	Heap() = default;
 	~Heap() = default;
 
 	// 힙의 가장 큰 원소를 반환한다.
-	int				top() const;
+	const int& top() const { return _container.front(); }
 
 	// 힙이 비었는지 체크한다.
-	bool			empty() const;
+	bool			empty() const { return _container.empty(); }
 
 	// 힙의 크기를 반환한다.
-	size_t			size() const;
+	size_t			size() const { return _container.size(); }
 
 	// 힙에 값을 삽입한다.
-	void			push(int value);
+	void			push(int value)
+	{
+		_container.push_back(value);
 
-	// 힙에 
+		size_t curr = _container.size() - 1;
+		size_t parent = curr / 2;
+
+		while (curr > 0 && _container[parent] < _container[curr])
+		{
+			swap(_container[parent], _container[curr]);
+
+			curr = parent;
+			parent = curr / 2;
+		}
+	}
+
+	// 힙에서 값을 제거한다.
+	void			pop()
+	{
+		if (empty())
+		{
+			return;
+		}
+
+		_container[0] = _container[_container.size() - 1];
+		_container.pop_back();
+
+		size_t curr = 0;
+		size_t child = 1;
+
+		while (child < _container.size())
+		{
+			if (child + 1 < _container.size() && _container[child] < _container[child + 1])
+			{
+				++child;
+			}
+
+			if (_container[curr] >= _container[child])
+			{
+				break;
+			}
+
+			swap(_container[curr], _container[child]);
+			curr = child;
+			child = curr * 2;
+		}
+	}
 private:
 	vector<int>		_container;
 };
