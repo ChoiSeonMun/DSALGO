@@ -25,6 +25,9 @@ class Set
 	};
 
 public:
+	Set() = default;
+	~Set() { clear(); }
+
 	// 트리의 높이를 구한다.
 	int						height() const
 	{
