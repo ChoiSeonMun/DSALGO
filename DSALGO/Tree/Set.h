@@ -150,6 +150,7 @@ public:
 			if (pos->Left == nullptr)
 			{
 				_root = pos->Right;
+				_root->Parent = nullptr;
 
 				delete pos;
 				pos = nullptr;
@@ -161,6 +162,7 @@ public:
 			else if (pos->Right == nullptr)
 			{
 				_root = pos->Left;
+				_root->Parent = nullptr;
 
 				delete pos;
 				pos = nullptr;
