@@ -24,12 +24,12 @@ public:
 	{
 		_container.push_back(value);
 
-		size_t curr = _container.size() - 1;
+		size_t curr = _container.size();
 		size_t parent = curr / 2;
 
-		while (curr > 0 && _container[parent] < _container[curr])
+		while (curr > 1 && _container[parent - 1] < _container[curr - 1])
 		{
-			swap(_container[parent], _container[curr]);
+			swap(_container[parent - 1], _container[curr - 1]);
 
 			curr = parent;
 			parent = curr / 2;
@@ -47,22 +47,22 @@ public:
 		_container[0] = _container[_container.size() - 1];
 		_container.pop_back();
 
-		size_t curr = 0;
-		size_t child = 1;
+		size_t curr = 1;
+		size_t child = 2;
 
-		while (child < _container.size())
+		while (child <= _container.size())
 		{
-			if (child + 1 < _container.size() && _container[child] < _container[child + 1])
+			if (child + 1 <= _container.size() && _container[child - 1] < _container[child])
 			{
 				++child;
 			}
 
-			if (_container[curr] >= _container[child])
+			if (_container[curr - 1] >= _container[child - 1])
 			{
 				break;
 			}
 
-			swap(_container[curr], _container[child]);
+			swap(_container[curr - 1], _container[child - 1]);
 			curr = child;
 			child = curr * 2;
 		}
