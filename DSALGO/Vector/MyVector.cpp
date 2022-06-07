@@ -174,15 +174,7 @@ int* MyVector::erase(int* pos)
 	}
 
 	int* last = end() - 1;
-
-	if (pos == last)
-	{
-		--_size;
-
-		return end();
-	}
-
-	for (int* iter = pos; iter != last - 1; ++iter)
+	for (int* iter = pos; iter != last; ++iter)
 	{
 		*iter = *(iter + 1);
 	}
